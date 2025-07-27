@@ -1,3 +1,55 @@
+# 贵妃 Flutter iOS 项目
+
+这是一个 Flutter 移动应用项目，包含完整的前端界面和后端 API 集成。
+
+## GitHub 仓库
+
+项目已上传至: https://github.com/computerjd/guifei-flutter-ios
+
+## iOS 构建说明
+
+由于 iOS 应用构建需要 macOS 环境和 Xcode，Windows 用户可以:
+
+1. 使用 macOS 设备进行构建
+2. 使用 CI/CD 服务 (如 GitHub Actions, Codemagic)
+3. 使用云端 macOS 服务
+
+### 在 macOS 上构建 iOS 应用
+
+1. 确保已安装 Xcode
+2. 配置 iOS 开发者账号
+3. 运行构建命令:
+```bash
+flutter build ios --release
+```
+
+4. 在 Xcode 中打开 `ios/Runner.xcworkspace`
+5. 配置签名和发布设置
+6. 构建并上传到 App Store
+
+## 项目运行
+
+```bash
+# 安装依赖
+flutter pub get
+
+# 运行 Web 版本
+flutter run -d chrome --web-port=9534
+
+# 运行 Android 版本
+flutter run -d android
+
+# 运行 iOS 版本 (仅限 macOS)
+flutter run -d ios
+```
+
+## 联系信息
+
+- 开发者: yanfeida35@gmail.com
+- GitHub: https://github.com/computerjd/guifei-flutter-ios
+
+---
+
 ## app进一步规划
 
 # 数据库重新设计，原有数据无需保存，但是依然必须使用MySQL（原来的数据库我已经删除）
