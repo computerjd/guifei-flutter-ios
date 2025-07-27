@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贵妃直播 - 管理后台</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+    <!-- 登录页面 -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <div class="login-box">
+                <h1>贵妃直播管理后台</h1>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">账号</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="login-btn">登录</button>
+                    <button type="button" id="testApiBtn" class="test-btn" style="margin-top: 10px; background: #28a745;">测试API连接</button>
+                </form>
+                <div id="loginError" class="error-message"></div>
+                <div id="testResult" class="test-result" style="margin-top: 10px; padding: 10px; border-radius: 4px; display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 管理后台主页面 -->
+    <div id="adminPage" class="page">
+        <header class="admin-header">
+            <h1>贵妃直播管理后台</h1>
+            <div class="header-actions">
+                <span id="currentUser">管理员</span>
+                <button id="logoutBtn" class="logout-btn">退出登录</button>
+            </div>
+        </header>
+
+        <nav class="admin-nav">
+            <ul>
+                <li><a href="#" data-tab="dashboard" class="nav-link active">仪表盘</a></li>
+                <li><a href="#" data-tab="rooms" class="nav-link">房间管理</a></li>
+                <li><a href="#" data-tab="users" class="nav-link">用户管理</a></li>
+                <li><a href="#" data-tab="commands" class="nav-link">指令控制</a></li>
+                <li><a href="#" data-tab="logs" class="nav-link">系统日志</a></li>
+            </ul>
+        </nav>
+
+        <main class="admin-content">
+            <!-- 仪表盘 -->
+            <div id="dashboard" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🏠</div>
+                        <div class="stat-info">
+                            <h3>活跃房间</h3>
+                            <div class="stat-value" id="activeRooms">0</div>
+                            <div class="stat-change" id="roomsChange">+0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h3>在线用户</h3>
+                            <div class="stat-value" id="onlineUsers">0</div>
+                            <div class="stat-change" id="usersChange">+0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🌐</div>
+                        <div class="stat-info">
+                            <h3>服务器状态</h3>
+                            <div class="stat-value" id="serverStatus">离线</div>
+                            <div class="stat-change" id="statusChange">检测中</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-info">
+                            <h3>系统运行时间</h3>
+                            <div class="stat-value" id="uptime">--</div>
+                            <div class="stat-change" id="uptimeChange">实时监控</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 实时图表区域 -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <h3>用户活跃度趋势</h3>
+                        <canvas id="userChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>房间活跃度分布</h3>
+                        <canvas id="roomChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 快速操作面板 -->
+                <div class="quick-actions">
+                    <h3>快速操作</h3>
+                    <div class="action-buttons">
+                        <button class="quick-btn" onclick="refreshAllData()">🔄 刷新数据</button>
+                        <button class="quick-btn" onclick="exportLogs()">📊 导出日志</button>
+                        <button class="quick-btn" onclick="systemMaintenance()">🔧 系统维护</button>
+                        <button class="quick-btn" onclick="emergencyStop()">🚨 紧急停止</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 房间管理 -->
+            <div id="rooms" class="tab-content">
+                <h2>房间管理</h2>
+                <div class="table-container">
+                    <table id="roomsTable">
+                        <thead>
+                            <tr>
+                                <th>房间ID</th>
+                                <th>观众数量</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 用户管理 -->
+            <div id="users" class="tab-content">
+                <div class="section-header">
+                    <h2>用户管理</h2>
+                    <div class="header-controls">
+                        <input type="text" id="userSearch" placeholder="搜索用户..." class="search-input">
+                        <select id="userFilter" class="filter-select">
+                            <option value="all">全部用户</option>
+                            <option value="online">在线用户</option>
+                            <option value="banned">已封禁</option>
+                            <option value="vip">VIP用户</option>
+                        </select>
+                        <button class="refresh-btn" onclick="loadUsers()">🔄 刷新</button>
+                    </div>
+                </div>
+                
+                <div class="user-stats">
+                    <div class="user-stat">
+                        <span class="stat-label">总用户数:</span>
+                        <span class="stat-number" id="totalUsers">0</span>
+                    </div>
+                    <div class="user-stat">
+                        <span class="stat-label">在线用户:</span>
+                        <span class="stat-number" id="onlineUsersCount">0</span>
+                    </div>
+                    <div class="user-stat">
+                        <span class="stat-label">今日新增:</span>
+                        <span class="stat-number" id="newUsersToday">0</span>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>头像</th>
+                                <th>用户ID</th>
+                                <th>昵称</th>
+                                <th>状态</th>
+                                <th>当前房间</th>
+                                <th>等级</th>
+                                <th>加入时间</th>
+                                <th>最后活跃</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 指令控制 -->
+            <div id="commands" class="tab-content">
+                <h2>指令控制中心</h2>
+                <div class="command-panel">
+                    <div class="command-group">
+                        <h3>📢 系统广播</h3>
+                        <div class="form-group">
+                            <label for="broadcastMessage">广播消息</label>
+                            <textarea id="broadcastMessage" placeholder="输入要广播的消息" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="broadcastType">广播类型</label>
+                            <select id="broadcastType">
+                                <option value="info">📢 普通通知</option>
+                                <option value="warning">⚠️ 警告信息</option>
+                                <option value="urgent">🚨 紧急通知</option>
+                                <option value="maintenance">🔧 维护通知</option>
+                            </select>
+                        </div>
+                        <div class="command-buttons">
+                            <button id="sendBroadcast" class="command-btn primary">发送广播</button>
+                            <button id="scheduleBroadcast" class="command-btn secondary">定时发送</button>
+                        </div>
+                    </div>
+                    
+                    <div class="command-group">
+                        <h3>🏠 房间管理</h3>
+                        <div class="form-group">
+                            <label for="targetRoom">目标房间</label>
+                            <select id="targetRoom">
+                                <option value="">选择房间</option>
+                            </select>
+                        </div>
+                        <div class="command-buttons">
+                            <button id="closeRoom" class="command-btn danger">🚫 关闭房间</button>
+                            <button id="muteRoom" class="command-btn warning">🔇 禁言房间</button>
+                            <button id="kickAllUsers" class="command-btn warning">👥 踢出所有用户</button>
+                            <button id="lockRoom" class="command-btn secondary">🔒 锁定房间</button>
+                        </div>
+                    </div>
+                    
+                    <div class="command-group">
+                        <h3>👤 用户管理</h3>
+                        <div class="form-group">
+                            <label for="targetUser">目标用户</label>
+                            <input type="text" id="targetUser" placeholder="输入用户ID或昵称">
+                        </div>
+                        <div class="command-buttons">
+                            <button id="banUser" class="command-btn danger">🚫 封禁用户</button>
+                            <button id="muteUser" class="command-btn warning">🔇 禁言用户</button>
+                            <button id="kickUser" class="command-btn warning">👋 踢出用户</button>
+                            <button id="promoteUser" class="command-btn success">⭐ 设为VIP</button>
+                        </div>
+                    </div>
+                    
+                    <div class="command-group">
+                        <h3>⚙️ 系统控制</h3>
+                        <div class="system-controls">
+                            <div class="control-row">
+                                <label class="switch">
+                                    <input type="checkbox" id="maintenanceMode">
+                                    <span class="slider"></span>
+                                </label>
+                                <span>维护模式</span>
+                            </div>
+                            <div class="control-row">
+                                <label class="switch">
+                                    <input type="checkbox" id="newUserRegistration" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span>允许新用户注册</span>
+                            </div>
+                            <div class="control-row">
+                                <label class="switch">
+                                    <input type="checkbox" id="chatEnabled" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span>全局聊天功能</span>
+                            </div>
+                        </div>
+                        <div class="command-buttons">
+                            <button id="restartServer" class="command-btn danger">🔄 重启服务器</button>
+                            <button id="backupData" class="command-btn secondary">💾 备份数据</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 系统日志 -->
+            <div id="logs" class="tab-content">
+                <h2>系统日志</h2>
+                <div class="log-controls">
+                    <button id="clearLogs" class="command-btn">清空日志</button>
+                    <button id="refreshLogs" class="command-btn">刷新</button>
+                </div>
+                <div class="log-container">
+                    <div id="logContent"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js?v=1.1"></script>
+</body>
+</html>

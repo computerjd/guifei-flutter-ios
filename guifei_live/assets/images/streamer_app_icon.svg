@@ -1,0 +1,52 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景渐变 -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF9A56;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF6B35;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="camera" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2C3E50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34495E;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="lens" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498DB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2980B9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 圆角背景 -->
+  <rect width="192" height="192" rx="42" fill="url(#bg)"/>
+  
+  <!-- 摄像头主体 -->
+  <rect x="32" y="64" width="128" height="80" rx="16" fill="url(#camera)"/>
+  
+  <!-- 镜头 -->
+  <circle cx="96" cy="104" r="32" fill="url(#lens)" stroke="white" stroke-width="3"/>
+  <circle cx="96" cy="104" r="20" fill="#1ABC9C"/>
+  <circle cx="96" cy="104" r="12" fill="#16A085"/>
+  
+  <!-- 录制指示灯 -->
+  <circle cx="140" cy="80" r="6" fill="#E74C3C">
+    <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- LIVE 文字 -->
+  <rect x="72" y="32" width="48" height="16" rx="8" fill="#E74C3C"/>
+  <text x="96" y="44" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="10" font-weight="bold">LIVE</text>
+  
+  <!-- 支架 -->
+  <rect x="88" y="144" width="16" height="24" fill="url(#camera)"/>
+  <rect x="64" y="168" width="64" height="8" rx="4" fill="url(#camera)"/>
+  
+  <!-- 装饰性元素 -->
+  <circle cx="160" cy="48" r="4" fill="white" opacity="0.6"/>
+  <circle cx="32" cy="144" r="3" fill="white" opacity="0.4"/>
+  <circle cx="168" cy="168" r="2" fill="white" opacity="0.5"/>
+  
+  <!-- 信号波纹 -->
+  <circle cx="48" cy="48" r="8" fill="none" stroke="white" stroke-width="2" opacity="0.6">
+    <animate attributeName="r" values="8;16;24" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;0.3;0" dur="3s" repeatCount="indefinite"/>
+  </circle>
+</svg>

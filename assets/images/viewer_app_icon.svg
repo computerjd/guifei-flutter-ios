@@ -1,0 +1,33 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景渐变 -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B9D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C44569;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="screen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#357ABD;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 圆角背景 -->
+  <rect width="192" height="192" rx="42" fill="url(#bg)"/>
+  
+  <!-- 手机屏幕 -->
+  <rect x="48" y="32" width="96" height="128" rx="12" fill="url(#screen)" stroke="white" stroke-width="3"/>
+  
+  <!-- 播放按钮 -->
+  <circle cx="96" cy="96" r="20" fill="white" opacity="0.9"/>
+  <polygon points="88,84 88,108 108,96" fill="url(#bg)"/>
+  
+  <!-- 观看眼睛图标 -->
+  <ellipse cx="96" cy="176" rx="24" ry="12" fill="white" opacity="0.8"/>
+  <circle cx="96" cy="176" r="8" fill="#333"/>
+  <circle cx="96" cy="174" r="3" fill="white"/>
+  
+  <!-- 装饰性光点 -->
+  <circle cx="160" cy="48" r="4" fill="white" opacity="0.6"/>
+  <circle cx="32" cy="144" r="3" fill="white" opacity="0.4"/>
+  <circle cx="168" cy="168" r="2" fill="white" opacity="0.5"/>
+</svg>
